@@ -1,8 +1,6 @@
 import { app, BrowserWindow } from "electron";
-import { createRequire } from "node:module";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
-createRequire(import.meta.url);
 const __dirname$1 = path.dirname(fileURLToPath(import.meta.url));
 process.env.APP_ROOT = path.join(__dirname$1, "..");
 const VITE_DEV_SERVER_URL = process.env["VITE_DEV_SERVER_URL"];
@@ -37,6 +35,17 @@ app.on("activate", () => {
     createWindow();
   }
 });
+app.on(
+  "certificate-error",
+  (event, _webContents, url, _error, _certificate, callback) => {
+    if (url.startsWith("https://graphql.anilist.co")) {
+      event.preventDefault();
+      callback(true);
+    } else {
+      callback(false);
+    }
+  }
+);
 app.whenReady().then(createWindow);
 export {
   MAIN_DIST,

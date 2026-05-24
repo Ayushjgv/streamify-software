@@ -1,14 +1,14 @@
-import React,{useState,useffect} from "react";
+import { useState } from "react";
+import type { CSSProperties } from "react";
 import { useNavigate } from "react-router-dom";
 import * as motion from "motion/react-client";
-import { Weight } from "lucide-react";
 
 const Landing = () => {
   const navigate = useNavigate();
   const [ToHome, setToHome] = useState(false);
 
 
-  const handleClick=()=>{
+const handleClick=()=>{
     setToHome(true);
 
     setTimeout(()=>{
@@ -41,13 +41,7 @@ const Landing = () => {
   );
 };
 
-const box ={
-  width:100,
-  height:100,
-  backgroundColor:'red',
-  borderRadius:5
-}
-const streamify = {
+const streamify: CSSProperties = {
   fontSize: "3rem",
   fontWeight: "bold",
   color: "white",
@@ -56,14 +50,14 @@ const streamify = {
   WebkitBackgroundClip: "text",
   WebkitTextFillColor: "transparent",
 }
-const button={
+const button: CSSProperties = {
   padding: "10px 20px",
   color: "white",
   border: "1px solid white",
   borderRadius: 5,
   cursor: "pointer",
   marginTop:20,
-  Weight: "900",
-  fontfamily: "Arial, sans-serif",
+  fontWeight: 900,
+  fontFamily: "Arial, sans-serif",
 }
 export default Landing;

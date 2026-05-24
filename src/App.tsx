@@ -1,8 +1,8 @@
-import React from 'react';
 import { Route,Routes } from 'react-router-dom';
 import Home from '../pages/Home';
 import Landing from '../pages/Landing';
 import FramerMotion from '../pages/FramerMotion';
+import Player from '../pages/Player';
 
 const App = () => {
   return (
@@ -10,6 +10,7 @@ const App = () => {
       <Route path="/" element={<Landing />} />
       <Route path="/home" element={<Home />} />
       <Route path="/framer-motion" element={<FramerMotion />} />
+      <Route path="/player/:id" element={<Player />} />
     </Routes>
   )
 }

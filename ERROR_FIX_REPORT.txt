@@ -1,0 +1,36 @@
+Streamify Axios/Poster Issue Report
+
+Error found:
+- The Home page was loading every anime row inside one large try/catch block.
+- If any AniList Axios request failed, the catch block ran before state was updated, so every list stayed empty.
+- That is why the headings were visible but posters were missing.
+- In this environment, graphql.anilist.co is also blocked/intercepted by the network security filter, so Axios cannot reliably fetch live AniList data.
+- The AniList queries were requesting perPage: 100. AniList page sizes should stay at 50 or below, so this was reduced to avoid API rejection.
+
+Files changed:
+- pages/Home.tsx
+- components/Queries.ts
+- components/Cards.tsx
+- components/HeroBanner.tsx
+- components/AnimeRow.tsx
+- components/animeTypes.ts
+- components/fallbackAnime.ts
+- components/posterPlaceholder.ts
+- pages/Landing.tsx
+- src/App.tsx
+- electron/main.ts
+
+How it was fixed:
+- Replaced the single all-or-nothing fetch flow with Promise.allSettled, so one failed request no longer breaks every row.
+- Added fallback anime data with poster URLs, so the page still shows posters when AniList is down or blocked.
+- Added an inline poster placeholder for broken image URLs, so blocked poster domains do not leave empty poster boxes.
+- Added a small warning message when fallback data is being used.
+- Reduced all AniList GraphQL queries from perPage: 100 to perPage: 50.
+- Added TypeScript types for anime data and component props.
+- Fixed TypeScript/build issues from the JSX to TSX conversion.
+- Fixed the Landing page React import bug where it imported a non-existent useeffect export.
+
+Verification:
+- npx tsc --noEmit passes successfully.
+- npx vite build passes successfully.
+- Local network testing showed graphql.anilist.co is currently blocked/intercepted by Sophos on this machine, so live data may still fail until the network allows AniList. The app now handles that case instead of showing empty rows.

@@ -1,8 +1,12 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Play, Info } from "lucide-react";
 
-const HeroBanner = ({ trendingAnime }) => {
+interface HeroBannerProps {
+  trendingAnime: AnimeMedia[];
+}
+
+const HeroBanner = ({ trendingAnime }: HeroBannerProps) => {
   const [index, setIndex] = useState(0);
 
   // Prevent crash before data loads
@@ -20,6 +24,7 @@ const HeroBanner = ({ trendingAnime }) => {
   }, [trendingAnime.length]);
 
   const current = trendingAnime[index];
+  const title = current.title.english || current.title.romaji;
 
   return (
     <div className="relative h-[70vh] md:h-[85vh] w-full bg-black overflow-hidden">
@@ -34,8 +39,14 @@ const HeroBanner = ({ trendingAnime }) => {
         >
           {/* Background */}
           <img
-            src={current.bannerImage || current.coverImage.extraLarge}
-            alt={current.title.english || current.title.romaji}
+            src={
+              current.bannerImage ||
+              current.coverImage.extraLarge ||
+              current.coverImage.large ||
+              current.coverImage.medium ||
+              ""
+            }
+            alt={title}
             className="h-full w-full object-cover object-top"
           />
 
@@ -53,7 +64,7 @@ const HeroBanner = ({ trendingAnime }) => {
               transition={{ delay: 0.2 }}
               className="text-4xl md:text-7xl font-black tracking-tight leading-none mb-5"
             >
-              {current.title.english || current.title.romaji}
+              {title}
             </motion.h1>
 
             {/* Description */}

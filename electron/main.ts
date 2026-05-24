@@ -1,9 +1,7 @@
 import { app, BrowserWindow } from 'electron'
-import { createRequire } from 'node:module'
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
 
-const require = createRequire(import.meta.url)
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 // The built directory structure
@@ -63,5 +61,18 @@ app.on('activate', () => {
     createWindow()
   }
 })
+
+app.on(
+  'certificate-error',
+  (event, _webContents, url, _error, _certificate, callback) => {
+    if (url.startsWith('https://graphql.anilist.co')) {
+      event.preventDefault();
+      callback(true);
+    } else {
+      callback(false);
+    }
+  }
+);
+
 
 app.whenReady().then(createWindow)
