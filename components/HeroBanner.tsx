@@ -2,19 +2,15 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Play, Info } from "lucide-react";
 
-interface HeroBannerProps {
-  trendingAnime: AnimeMedia[];
-}
+
 
 const HeroBanner = ({ trendingAnime }: HeroBannerProps) => {
   const [index, setIndex] = useState(0);
 
-  // Prevent crash before data loads
   if (!trendingAnime || trendingAnime.length === 0) {
     return null;
   }
 
-  // Auto-scroll slides
   useEffect(() => {
     const interval = setInterval(() => {
       setIndex((prevIndex) => (prevIndex + 1) % trendingAnime.length);
@@ -51,8 +47,8 @@ const HeroBanner = ({ trendingAnime }: HeroBannerProps) => {
           />
 
           {/* Overlays */}
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/40 to-black/50" />
-          <div className="absolute inset-0 bg-gradient-to-r from-black via-black/40 to-transparent" />
+          <div className="absolute inset-0 bg-linear-to-t from-[#0a0a0a] via-[#0a0a0a]/40 to-black/50" />
+          <div className="absolute inset-0 bg-linear-to-r from-black via-black/40 to-transparent" />
 
           {/* Content */}
           <div className="absolute bottom-16 md:bottom-28 left-4 md:left-12 max-w-2xl z-10">
@@ -124,3 +120,24 @@ const HeroBanner = ({ trendingAnime }: HeroBannerProps) => {
 };
 
 export default HeroBanner;
+
+
+
+
+type HeroBannerProps={
+  trendingAnime: {
+    id: number;
+    title: {
+      english: string | null;
+      romaji: string | null;
+    };
+    description: string | null;
+    genres: string[];
+    bannerImage: string | null;
+    coverImage: {
+      extraLarge: string | null;
+      large: string | null;
+      medium: string | null;
+    };
+  }[];
+}

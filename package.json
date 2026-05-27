@@ -19,6 +19,7 @@
     "react-dom": "^18.2.0",
     "react-navigation": "^5.0.0",
     "react-router-dom": "^7.15.1",
+    "redis": "^5.12.1",
     "tailwindcss": "^4.3.0"
   },
   "devDependencies": {

@@ -2,13 +2,14 @@ import { useState } from "react";
 import type { CSSProperties } from "react";
 import { useNavigate } from "react-router-dom";
 import * as motion from "motion/react-client";
+import axios from "axios";
 
 const Landing = () => {
   const navigate = useNavigate();
   const [ToHome, setToHome] = useState(false);
 
 
-const handleClick=()=>{
+  const handleClick=()=>{
     setToHome(true);
 
     setTimeout(()=>{
@@ -21,8 +22,8 @@ const handleClick=()=>{
       <motion.div
         style={streamify}
         initial={ToHome ? { scale: 1.7, opacity: 1 } : { scale: 0, opacity: 0 }}
-        animate={ToHome?{ scale:40,opacity: 0 }:{ scale: 1.7, opacity: 1 }}
-        transition={ToHome?{duration: 0.9, scale: { type: "spring", bounce: 0.2, visualDuration:0.8 } }:{duration: 2, scale: { type: "spring", bounce: 0.2, visualDuration:0.8 } }}
+        animate={ToHome?{ scale:40,opacity: 0 }:{ scale: 1.7,animationDelay: 0.5, opacity: 1 }}
+        transition={ToHome?{duration: 0.9, scale: { type: "spring", bounce: 0.2, visualDuration:0.8 } }:{duration: 2,delay:0.5, scale: { type: "spring", bounce: 0.2, visualDuration:1 } }}
       >STREAMIFY</motion.div>
 
       <motion.button
