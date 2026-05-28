@@ -41,6 +41,25 @@ app.post("/animelist", async (req, res) => {
     }  
 });
 
+
+app.post("/animeSearch", async (req, res) => {
+    const type = req.body.type;
+    const animelist = await client.get(type);
+    const Query = req.body.query;
+    if(animelist){
+        res.send(JSON.parse(animelist));
+        return;
+    }else{
+        const respond = await axios.post(AnilistAPI, {
+            query:Query
+        });
+        client.set(type,JSON.stringify(respond.data),{EX:120});
+        res.send(respond.data);
+    }  
+});
+
+
+
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });

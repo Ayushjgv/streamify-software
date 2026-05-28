@@ -1,71 +1,255 @@
-import { app, BrowserWindow } from 'electron'
-import { fileURLToPath } from 'node:url'
-import path from 'node:path'
+// import { app, BrowserWindow } from 'electron'
+// import { fileURLToPath } from 'node:url'
+// import path from 'node:path'
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url))
+// const __dirname = path.dirname(fileURLToPath(import.meta.url))
+// process.env.APP_ROOT = path.join(__dirname, '..')
 
-// The built directory structure
-//
-// ├─┬─┬ dist
-// │ │ └── index.html
-// │ │
-// │ ├─┬ dist-electron
-// │ │ ├── main.js
-// │ │ └── preload.mjs
-// │
-process.env.APP_ROOT = path.join(__dirname, '..')
+// export const VITE_DEV_SERVER_URL = process.env['VITE_DEV_SERVER_URL']
+// export const MAIN_DIST = path.join(process.env.APP_ROOT, 'dist-electron')
+// export const RENDERER_DIST = path.join(process.env.APP_ROOT, 'dist')
 
-// 🚧 Use ['ENV_NAME'] avoid vite:define plugin - Vite@2.x
-export const VITE_DEV_SERVER_URL = process.env['VITE_DEV_SERVER_URL']
-export const MAIN_DIST = path.join(process.env.APP_ROOT, 'dist-electron')
-export const RENDERER_DIST = path.join(process.env.APP_ROOT, 'dist')
+// process.env.VITE_PUBLIC = VITE_DEV_SERVER_URL ? path.join(process.env.APP_ROOT, 'public') : RENDERER_DIST
 
-process.env.VITE_PUBLIC = VITE_DEV_SERVER_URL ? path.join(process.env.APP_ROOT, 'public') : RENDERER_DIST
+// let win: BrowserWindow | null
 
-let win: BrowserWindow | null
+// function createWindow() {
+//   win = new BrowserWindow({
+//     icon: path.join(process.env.VITE_PUBLIC, 'electron-vite.svg'),
+//     webPreferences: {
+//       preload: path.join(__dirname, 'preload.mjs'),
+//     },
+//   })
 
-function createWindow() {
-  win = new BrowserWindow({
-    icon: path.join(process.env.VITE_PUBLIC, 'electron-vite.svg'),
-    webPreferences: {
-      preload: path.join(__dirname, 'preload.mjs'),
-    },
-  })
+//   win.webContents.on('did-finish-load', () => {
+//     win?.webContents.send('main-process-message', (new Date).toLocaleString())
+//   })
+//   if (VITE_DEV_SERVER_URL) {
+//     win.loadURL(VITE_DEV_SERVER_URL)
+//   } else {
+//     win.loadFile(path.join(RENDERER_DIST, 'index.html'))
+//   }
+// }
 
-  // Test active push message to Renderer-process.
-  win.webContents.on('did-finish-load', () => {
-    win?.webContents.send('main-process-message', (new Date).toLocaleString())
-  })
-  if (VITE_DEV_SERVER_URL) {
-    win.loadURL(VITE_DEV_SERVER_URL)
-  } else {
-    // win.loadFile('dist/index.html')
-    win.loadFile(path.join(RENDERER_DIST, 'index.html'))
+// app.on('window-all-closed', () => {
+//   if (process.platform !== 'darwin') {
+//     app.quit()
+//     win = null
+//   }
+// })
+
+// app.on('activate', () => {
+//   if (BrowserWindow.getAllWindows().length === 0) {
+//     createWindow()
+//   }
+// })
+
+// app.on(
+//   'certificate-error',
+//   (event, _webContents, url, _error, _certificate, callback) => {
+//     if (url.startsWith('https://graphql.anilist.co')) {
+//       event.preventDefault();
+//       callback(true);
+//     } else {
+//       callback(false);
+//     }
+//   }
+// );
+
+
+// app.whenReady().then(createWindow)
+
+
+
+
+import { app, BrowserWindow, ipcMain } from "electron";
+import { fileURLToPath } from "node:url";
+import path from "node:path";
+import axios from "axios";
+import dotenv from "dotenv";
+import { createClient } from "redis";
+
+dotenv.config();
+
+const __dirname = path.dirname(
+  fileURLToPath(import.meta.url)
+);
+
+process.env.APP_ROOT = path.join(
+  __dirname,
+  ".."
+);
+
+export const VITE_DEV_SERVER_URL =
+  process.env["VITE_DEV_SERVER_URL"];
+
+export const MAIN_DIST = path.join(
+  process.env.APP_ROOT,
+  "dist-electron"
+);
+
+export const RENDERER_DIST = path.join(
+  process.env.APP_ROOT,
+  "dist"
+);
+
+process.env.VITE_PUBLIC =
+  VITE_DEV_SERVER_URL
+    ? path.join(process.env.APP_ROOT, "public")
+    : RENDERER_DIST;
+
+let win: BrowserWindow | null;
+
+// ================= REDIS =================
+const redis = createClient({
+  url: "redis://default:9aSdEW0W55yEGPwhljH0mR40AStz7BKZ@vertical-meeting-lunch-59337.db.redis.io:15218",
+});
+
+redis.on("error", (err) =>
+  console.log("Redis Error:", err)
+);
+
+async function connectRedis() {
+  try {
+    await redis.connect();
+
+    console.log("Redis Connected");
+  } catch (err) {
+    console.error(err);
   }
 }
 
-// Quit when all windows are closed, except on macOS. There, it's common
-// for applications and their menu bar to stay active until the user quits
-// explicitly with Cmd + Q.
-app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
-    app.quit()
-    win = null
-  }
-})
+// ================= WINDOW =================
 
-app.on('activate', () => {
-  // On OS X it's common to re-create a window in the app when the
-  // dock icon is clicked and there are no other windows open.
-  if (BrowserWindow.getAllWindows().length === 0) {
-    createWindow()
+function createWindow() {
+  win = new BrowserWindow({
+    icon: path.join(
+      process.env.VITE_PUBLIC,
+      "electron-vite.svg"
+    ),
+
+    webPreferences: {
+      preload: path.join(
+        __dirname,
+        "preload.mjs"
+      ),
+
+      contextIsolation: true,
+      nodeIntegration: false,
+    },
+  });
+
+  win.webContents.on(
+    "did-finish-load",
+    () => {
+      win?.webContents.send(
+        "main-process-message",
+        new Date().toLocaleString()
+      );
+    }
+  );
+
+  if (VITE_DEV_SERVER_URL) {
+    win.loadURL(VITE_DEV_SERVER_URL);
+  } else {
+    win.loadFile(
+      path.join(
+        RENDERER_DIST,
+        "index.html"
+      )
+    );
   }
-})
+}
+
+// ================= IPC =================
+
+ipcMain.handle(
+  "get-anime-list",
+  async (_, { query, type }) => {
+    try {
+      const cacheKey = `anime:${type}`;
+
+      const cached =
+        await redis.get(cacheKey);
+
+      if (cached) {
+        console.log(
+          "Cache hit:",
+          cacheKey
+        );
+
+        return JSON.parse(cached);
+      }
+
+      console.log(
+        "Cache miss:",
+        cacheKey
+      );
+
+      const response =
+        await axios.post(
+          "https://graphql.anilist.co",
+          {
+            query,
+          }
+        );
+
+      const media =
+        response.data.data.Page.media;
+
+      await redis.set(
+        cacheKey,
+        JSON.stringify(media),
+        {
+          EX: 3600,
+        }
+      );
+
+      return media;
+    } catch (err) {
+      console.error(err);
+
+      return [];
+    }
+  }
+);
+
+// ================= EVENTS =================
 
 app.on(
-  'certificate-error',
-  (event, _webContents, url, _error, _certificate, callback) => {
-    if (url.startsWith('https://graphql.anilist.co')) {
+  "window-all-closed",
+  () => {
+    if (process.platform !== "darwin") {
+      app.quit();
+      win = null;
+    }
+  }
+);
+
+app.on("activate", () => {
+  if (
+    BrowserWindow.getAllWindows()
+      .length === 0
+  ) {
+    createWindow();
+  }
+});
+
+app.on(
+  "certificate-error",
+  (
+    event,
+    _webContents,
+    url,
+    _error,
+    _certificate,
+    callback
+  ) => {
+    if (
+      url.startsWith(
+        "https://graphql.anilist.co"
+      )
+    ) {
       event.preventDefault();
       callback(true);
     } else {
@@ -73,6 +257,8 @@ app.on(
     }
   }
 );
+app.whenReady().then(async () => {
+  await connectRedis();
 
-
-app.whenReady().then(createWindow)
+  createWindow();
+});
