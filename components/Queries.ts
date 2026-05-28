@@ -12,6 +12,7 @@ const Queries = {
 
   fragment AnimeFields on Media {
     id
+    idMal
     title {
       romaji
       english
@@ -69,6 +70,7 @@ const Queries = {
 
   fragment AnimeFields on Media {
     id
+    idMal
     title {
       romaji
       english
@@ -99,6 +101,7 @@ const Queries = {
 
   fragment AnimeFields on Media {
     id
+    idMal
     title {
       romaji
       english
@@ -133,6 +136,7 @@ const Queries = {
 
   fragment AnimeFields on Media {
     id
+    idMal
     title {
       romaji
       english
@@ -167,6 +171,7 @@ const Queries = {
 
   fragment AnimeFields on Media {
     id
+    idMal
     title {
       romaji
       english
@@ -197,6 +202,7 @@ const Queries = {
 
   fragment AnimeFields on Media {
     id
+    idMal
     title {
       romaji
       english
@@ -226,6 +232,7 @@ const Queries = {
 
   fragment AnimeFields on Media {
     id
+    idMal
     title {
       romaji
       english
@@ -255,6 +262,7 @@ const Queries = {
 
   fragment AnimeFields on Media {
     id
+    idMal
     title {
       romaji
       english
@@ -284,6 +292,7 @@ const Queries = {
 
   fragment AnimeFields on Media {
     id
+    idMal
     title {
       romaji
       english
