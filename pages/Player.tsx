@@ -1,31 +1,8 @@
-// // import React from "react";
-// // import { useParams } from "react-router-dom";
-
-// // const Player = () => {
-// //   const { id } = useParams();
-
-// //   return (
-// //     <div className="h-screen w-full bg-black flex flex-col items-center justify-center gap-4 p-4 text-white">
-// //       Player ID: {id}
-// //       <button onClick={() => window.history.back()}>Back</button>
-// //       <iframe
-// //         src={`https://megaplay.buzz/stream/ani/${id}/1/sub`}
-// //         allowFullScreen
-// //         width="100%"
-// //         height="100%"
-// //         frameBorder={0}
-// //         scrolling="no"
-// //       ></iframe>
-// //     </div>
-// //   );
-// // };
-
-// // export default Player;
-
 
 
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import Navbar from '../components/Navbar';
 import {
   ArrowLeft,
   Play,
@@ -100,6 +77,7 @@ const Player = () => {
   const [anime, setAnime] = useState<any>(null);
   const [recommended, setRecommended] = useState<any[]>([]);
   const [episode, setEpisode] = useState<number>(1);
+  const [SubDub, setSubDub] = useState<any>('sub');
 
   useEffect(() => {
     const fetchAnime = async () => {
@@ -142,8 +120,12 @@ const Player = () => {
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white">
+
+      {/* navbar */}
+      <Navbar />
+
       {/* Banner */}
-      <div className="relative h-[40vh] w-full overflow-hidden">
+      <div className="relative h-[50vh] w-full overflow-hidden ">
         <img
           src={anime.bannerImage || anime.coverImage.extraLarge}
           alt={title}
@@ -154,7 +136,7 @@ const Player = () => {
 
         <button
           onClick={() => window.history.back()}
-          className="absolute left-5 top-5 z-20 flex items-center gap-2 rounded-full bg-black/40 px-4 py-2 backdrop-blur-md transition hover:bg-black/70"
+          className="absolute left-5 top-20 z-20 flex items-center gap-2 rounded-full bg-black/40 px-4 py-2 backdrop-blur-md transition hover:bg-black/70"
         >
           <ArrowLeft className="h-4 w-4" />
           Back
@@ -204,54 +186,91 @@ const Player = () => {
       </div>
 
       {/* Main Layout */}
-      <div className="mx-auto flex max-w-7xl flex-col gap-10 px-4 py-8 lg:flex-row">
-        {/* Left */}
+      <div className="flex  flex-col gap-10 px-4 py-8 lg:flex-row justify-between">
+
+        {/* Episode Selector */}
+        <div className="mt-8 w-full lg:w-[320px] overflow-auto h-165 scrollbar-none">
+          <div className="mb-5 flex items-center gap-3">
+            <Play className="h-5 w-5 text-purple-400" />
+
+            <h2 className="text-2xl font-bold">
+              Episodes
+            </h2>
+          </div>
+
+
+
+          <div className="flex flex-wrap gap-3">
+            {Array.from({
+              length: anime.episodes || 12,
+            }).map((_, index) => {
+              const ep = index + 1;
+
+              return (
+                <button
+                  key={ep}
+                  onClick={() => setEpisode(ep)}
+                  className={`rounded-xl px-4 py-2 text-sm font-semibold transition ${episode === ep
+                    ? "bg-purple-600 text-white cursor-pointer"
+                    : "bg-white/5 text-neutral-300 hover:bg-white/10 cursor-pointer"
+                    }`}
+                >
+                  EP {ep}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Player */}
         <div className="flex-1">
           {/* Video */}
           <div className="overflow-hidden rounded-3xl border border-white/10 bg-black shadow-2xl">
             <iframe
-              src={`https://megaplay.buzz/stream/ani/${id}/${episode}/sub`}
+              src={`https://megaplay.buzz/stream/ani/${id}/${episode}/${SubDub}`}
               allowFullScreen
               width="100%"
               height="700"
+              sandbox="allow-scripts allow-same-origin allow-presentation"
               frameBorder={0}
               scrolling="no"
               className="w-full"
             />
           </div>
 
-          {/* Episode Selector */}
-          <div className="mt-8">
+          {/* language */}
+
+          <div className="pb-5 flex-col flex gap-2 mt-5">
             <div className="mb-5 flex items-center gap-3">
               <Play className="h-5 w-5 text-purple-400" />
 
               <h2 className="text-2xl font-bold">
-                Episodes
+                Languages
               </h2>
             </div>
-
-            <div className="flex flex-wrap gap-3">
-              {Array.from({
-                length: anime.episodes || 12,
-              }).map((_, index) => {
-                const ep = index + 1;
-
-                return (
-                  <button
-                    key={ep}
-                    onClick={() => setEpisode(ep)}
-                    className={`rounded-xl px-4 py-2 text-sm font-semibold transition ${
-                      episode === ep
-                        ? "bg-purple-600 text-white"
-                        : "bg-white/5 text-neutral-300 hover:bg-white/10"
-                    }`}
-                  >
-                    EP {ep}
-                  </button>
-                );
-              })}
+            <div>
+              <button
+                onClick={() => setSubDub('sub')}
+                className={`rounded-xl px-4 py-2 text-sm font-semibold transition ${SubDub === 'sub'
+                  ? "bg-purple-600 text-white cursor-pointer"
+                  : "bg-white/5 text-neutral-300 hover:bg-white/10 cursor-pointer"
+                  }`}
+              >
+                SUB
+              </button>
+              <button
+                onClick={() => setSubDub('dub')}
+                className={`rounded-xl px-4 py-2 text-sm font-semibold transition ${SubDub === 'dub'
+                  ? "bg-purple-600 text-white cursor-pointer"
+                  : "bg-white/5 text-neutral-300 hover:bg-white/10 cursor-pointer"
+                  }`}
+              >
+                DUB
+              </button>
             </div>
+
           </div>
+
 
           {/* Description */}
           <div className="mt-10 rounded-3xl border border-white/10 bg-white/[0.03] p-6">
@@ -328,251 +347,3 @@ const Player = () => {
 };
 
 export default Player;
-
-
-// import React, { useEffect, useMemo, useState } from "react";
-// import axios from "axios";
-// import { useParams } from "react-router-dom";
-// import {
-//   ArrowLeft,
-//   Play,
-//   Star,
-// } from "lucide-react";
-
-// interface Episode {
-//   id: number;
-//   number: number;
-//   title: string;
-// }
-
-// interface AnimeData {
-//   title: {
-//     english?: string;
-//     romaji?: string;
-//   };
-
-//   images: {
-//     jpg: {
-//       large_image_url: string;
-//     };
-//   };
-
-//   synopsis?: string;
-//   episodes?: number;
-//   score?: number;
-//   genres?: {
-//     mal_id: number;
-//     name: string;
-//   }[];
-// }
-
-// const Player = () => {
-//   const { id } = useParams();
-
-//   const [anime, setAnime] =
-//     useState<AnimeData | null>(null);
-
-//   const [loading, setLoading] = useState(true);
-
-//   const [currentEpisode, setCurrentEpisode] =
-//     useState<number>(1);
-
-//   const [recommended, setRecommended] = useState<any[]>(
-//     []
-//   );
-
-//   useEffect(() => {
-//     const fetchAnime = async () => {
-//       try {
-//         const res = await axios.get(
-//           `https://api.jikan.moe/v4/anime/${id}/full`
-//         );
-
-//         setAnime(res.data.data);
-
-//         const rec = await axios.get(
-//           `https://api.jikan.moe/v4/anime/${id}/recommendations`
-//         );
-
-//         setRecommended(rec.data.data || []);
-//       } catch (err) {
-//         console.error(err);
-//       } finally {
-//         setLoading(false);
-//       }
-//     };
-
-//     fetchAnime();
-//   }, [id]);
-
-//   const episodes = useMemo(() => {
-//     const total = anime?.episodes || 12;
-
-//     return Array.from(
-//       { length: total },
-//       (_, i) => ({
-//         id: i + 1,
-//         number: i + 1,
-//         title: `Episode ${i + 1}`,
-//       })
-//     );
-//   }, [anime]);
-
-//   if (loading || !anime) {
-//     return (
-//       <div className="h-screen bg-black flex items-center justify-center text-white">
-//         Loading...
-//       </div>
-//     );
-//   }
-
-//   const title =
-//     anime.title.english ||
-//     anime.title.romaji;
-
-//   return (
-//     <div className="h-screen bg-[#0a0a0a] text-white flex overflow-hidden">
-//       {/* LEFT SIDEBAR */}
-//       <div className="w-[330px] bg-[#111] border-r border-white/10 flex flex-col">
-//         {/* Header */}
-//         <div className="p-4 border-b border-white/10">
-//           <button
-//             onClick={() => window.history.back()}
-//             className="flex items-center gap-2 text-sm text-neutral-400 hover:text-white transition"
-//           >
-//             <ArrowLeft size={18} />
-//             Back
-//           </button>
-
-//           <img
-//             src={anime.images.jpg.large_image_url}
-//             alt={title}
-//             className="mt-4 w-full h-[220px] object-cover rounded-2xl"
-//           />
-
-//           <h1 className="mt-4 text-2xl font-bold line-clamp-2">
-//             {title}
-//           </h1>
-
-//           {/* Score */}
-//           <div className="flex items-center gap-2 mt-3 text-yellow-400">
-//             <Star size={16} fill="currentColor" />
-
-//             <span className="font-semibold">
-//               {anime.score || "N/A"}
-//             </span>
-//           </div>
-
-//           {/* Genres */}
-//           <div className="flex flex-wrap gap-2 mt-4">
-//             {anime.genres?.slice(0, 3).map((genre) => (
-//               <span
-//                 key={genre.mal_id}
-//                 className="px-2 py-1 text-xs rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-300"
-//               >
-//                 {genre.name}
-//               </span>
-//             ))}
-//           </div>
-//         </div>
-
-//         {/* Episodes */}
-//         <div className="flex-1 overflow-y-auto p-3 space-y-2 scrollbar-hide">
-//           {episodes.map((ep) => (
-//             <button
-//               key={ep.id}
-//               onClick={() =>
-//                 setCurrentEpisode(ep.number)
-//               }
-//               className={`w-full rounded-xl p-3 flex items-center gap-3 transition ${
-//                 currentEpisode === ep.number
-//                   ? "bg-purple-600"
-//                   : "bg-white/5 hover:bg-white/10"
-//               }`}
-//             >
-//               <div className="h-10 w-10 rounded-lg bg-black/30 flex items-center justify-center">
-//                 <Play size={15} />
-//               </div>
-
-//               <div className="flex flex-col text-left">
-//                 <span className="font-semibold">
-//                   Episode {ep.number}
-//                 </span>
-
-//                 <span className="text-xs text-neutral-300">
-//                   {ep.title}
-//                 </span>
-//               </div>
-//             </button>
-//           ))}
-//         </div>
-//       </div>
-
-//       {/* RIGHT */}
-//       <div className="flex-1 flex flex-col overflow-y-auto">
-//         {/* Player */}
-//         <div className="p-5">
-//           <div className="aspect-video overflow-hidden rounded-3xl border border-white/10 bg-black">
-//             <iframe
-//               src={`https://megaplay.buzz/stream/ani/${id}/${currentEpisode}/sub`}
-//               width="100%"
-//               height="100%"
-//               allowFullScreen
-//               frameBorder={0}
-//             />
-//           </div>
-
-//           {/* Info */}
-//           <div className="mt-6">
-//             <h1 className="text-3xl font-black">
-//               {title}
-//             </h1>
-
-//             <p className="text-neutral-400 mt-2">
-//               Episode {currentEpisode}
-//             </p>
-
-//             <p className="mt-5 text-neutral-300 leading-relaxed max-w-4xl">
-//               {anime.synopsis}
-//             </p>
-//           </div>
-
-//           {/* Recommended */}
-//           <div className="mt-10">
-//             <h2 className="text-2xl font-bold mb-5">
-//               Recommended Anime
-//             </h2>
-
-//             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-5">
-//               {recommended
-//                 .slice(0, 10)
-//                 .map((anime: any) => (
-//                   <div
-//                     key={anime.entry.mal_id}
-//                     className="group cursor-pointer"
-//                     onClick={() => {
-//                       window.location.href = `/player/${anime.entry.mal_id}`;
-//                     }}
-//                   >
-//                     <div className="overflow-hidden rounded-2xl">
-//                       <img
-//                         src={anime.entry.images.jpg.large_image_url}
-//                         alt={anime.entry.title}
-//                         className="h-[260px] w-full object-cover transition duration-300 group-hover:scale-105"
-//                       />
-//                     </div>
-
-//                     <h3 className="mt-3 font-semibold line-clamp-2">
-//                       {anime.entry.title}
-//                     </h3>
-//                   </div>
-//                 ))}
-//             </div>
-//           </div>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default Player;
