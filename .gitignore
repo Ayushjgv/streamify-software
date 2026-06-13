@@ -9,6 +9,7 @@ lerna-debug.log*
 
 node_modules
 dist
+dist-electron
 dist-ssr
 *.local
 
@@ -26,6 +27,17 @@ dist-ssr
 # Dependencies
 node_modules/
 
+# Build output
+dist/
+dist-electron/
+dist-ssr/
+release/
+*.tsbuildinfo
+
+# Tool caches
+.vite/
+.cache/
+
 # Environment variables / Secrets
 .env
 .env.local
@@ -33,5 +45,4 @@ node_modules/
 .env.test.local
 .env.production.local
 
-
-release
+release/

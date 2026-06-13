@@ -1,6 +1,6 @@
 
 
-import React, {
+import {
   useState,
   useEffect,
 } from "react";
@@ -9,6 +9,7 @@ import HeroBanner from "../components/HeroBanner";
 import Cards from "../components/Cards";
 import Queries from "../components/Queries";
 import Navbar from "../components/Navbar";
+
 
 const Home = () => {
   const [trendingList, setTrendingList] =
